@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Neon Encoder / Decoder</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+background:#050505;
+font-family:'Share Tech Mono', monospace;
+color:#00ffea;
+text-align:center;
+padding:40px;
+}
+
+/* glowing title */
+
+h1{
+font-size:42px;
+color:#00fff7;
+text-shadow:
+0 0 5px #00fff7,
+0 0 10px #00fff7,
+0 0 20px #00fff7,
+0 0 40px #00fff7;
+animation: glow 2s infinite alternate;
+}
+
+@keyframes glow{
+from{ text-shadow:0 0 10px #00fff7;}
+to{ text-shadow:0 0 30px #00fff7;}
+}
+
+.container{
+max-width:900px;
+margin:auto;
+background:rgba(0,0,0,0.6);
+padding:30px;
+border-radius:12px;
+box-shadow:0 0 30px #00fff7;
+}
+
+/* text areas */
+
+textarea{
+width:100%;
+height:160px;
+background:#000;
+color:#00ff9c;
+border:1px solid #00fff7;
+padding:12px;
+margin-top:10px;
+border-radius:6px;
+font-size:15px;
+box-shadow:0 0 10px #00fff7 inset;
+}
+
+/* buttons */
+
+button{
+padding:12px 20px;
+margin:10px;
+background:#000;
+color:#00fff7;
+border:1px solid #00fff7;
+font-size:16px;
+cursor:pointer;
+border-radius:6px;
+transition:0.3s;
+}
+
+button:hover{
+background:#00fff7;
+color:#000;
+box-shadow:0 0 15px #00fff7;
+}
+
+/* file input */
+
+input[type=file]{
+color:#00fff7;
+margin-top:10px;
+}
+
+/* footer */
+
+.footer{
+margin-top:30px;
+color:#00ff9c;
+font-size:13px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>NEON ENCODER / DECODER</h1>
+
+<div class="container">
+
+<h3>INPUT</h3>
+
+<textarea id="inputText" placeholder="Type text OR encoded numbers..."></textarea>
+
+<br>
+
+<button onclick="encodeText()">ENCODE</button>
+<button onclick="decodeText()">DECODE</button>
+
+<br>
+
+<input type="file" id="fileInput">
+
+<br>
+
+<button onclick="downloadFile()">DOWNLOAD RESULT</button>
+<button onclick="copyText()">COPY RESULT</button>
+
+<h3>OUTPUT</h3>
+
+<textarea id="outputText" placeholder="Result will appear here"></textarea>
+
+</div>
+
+<div class="footer">
+Cyber Encoder Tool
+</div>
+
+<script>
+
+const characters =
+"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ ";
+
+let ALP = {};
+let NUM = {};
+
+for(let ch of characters){
+ALP[ch] = ch.charCodeAt(0).toString();
+NUM[ch.charCodeAt(0).toString()] = ch;
+}
+
+function encodeText(){
+
+let text=document.getElementById("inputText").value;
+
+let encoded=text.split("")
+.map(ch => ALP[ch] || "??")
+.join(" ");
+
+document.getElementById("outputText").value=encoded;
+
+}
+
+function decodeText(){
+
+let codes=document.getElementById("inputText").value.split(" ");
+
+let decoded=codes.map(c => NUM[c] || "??").join("");
+
+document.getElementById("outputText").value=decoded;
+
+}
+
+document.getElementById("fileInput").addEventListener("change",function(){
+
+let file=this.files[0];
+let reader=new FileReader();
+
+reader.onload=function(e){
+document.getElementById("inputText").value=e.target.result;
+};
+
+reader.readAsText(file);
+
+});
+
+function downloadFile(){
+
+let text=document.getElementById("outputText").value;
+
+let blob=new Blob([text],{type:"text/plain"});
+
+let a=document.createElement("a");
+
+a.href=URL.createObjectURL(blob);
+
+a.download="result.txt";
+
+a.click();
+
+}
+
+function copyText(){
+
+let text=document.getElementById("outputText");
+
+text.select();
+
+document.execCommand("copy");
+
+alert("Copied to clipboard");
+
+}
+
+</script>
+
+</body>
+</html>
